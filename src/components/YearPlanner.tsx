@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Icon from "@/components/ui/icon";
 
 const MONTHS = [
@@ -17,6 +17,16 @@ const load = (): PlannerData => {
   }
 };
 
+const exportData = (data: PlannerData) => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `planner-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 const YearPlanner = () => {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
@@ -24,9 +34,11 @@ const YearPlanner = () => {
   const [editing, setEditing] = useState<{ month: number; idx: number | null } | null>(null);
   const [value, setValue] = useState("");
   const [confirm, setConfirm] = useState<{ month: number; idx: number; text: string } | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   const touch = useRef({ x: 0, y: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const didMount = useRef(false);
 
   useEffect(() => {
@@ -95,18 +107,54 @@ const YearPlanner = () => {
     });
   };
 
+  const importData = useCallback(() => {
+    fileRef.current?.click();
+  }, []);
+
+  const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSyncing(true);
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (typeof data === "object" && data !== null) {
+          setEvents(data);
+        }
+      } catch { /* ignore */ }
+      setSyncing(false);
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }, []);
+
   const get = (m: number) => events[String(year)]?.[String(m)] || [];
   const isCurrent = (m: number) => m === now.getMonth() && year === now.getFullYear();
 
   return (
     <div className="planner-root">
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".json"
+        onChange={onFileChange}
+        style={{ display: "none" }}
+      />
+
       <div className="planner-header">
+        <button onClick={importData} className="planner-sync-btn" title="Загрузить из файла">
+          <Icon name="RefreshCw" size={18} className={syncing ? "planner-spin" : ""} />
+        </button>
         <button onClick={() => changeYear(-1)} className="planner-arrow">
           <Icon name="ChevronLeft" size={20} />
         </button>
         <span key={year} className="planner-year">{year}</span>
         <button onClick={() => changeYear(1)} className="planner-arrow">
           <Icon name="ChevronRight" size={20} />
+        </button>
+        <button onClick={() => exportData(events)} className="planner-sync-btn" title="Сохранить в файл">
+          <Icon name="Download" size={18} />
         </button>
       </div>
 

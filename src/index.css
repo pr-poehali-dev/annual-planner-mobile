@@ -119,8 +119,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 16px 0 8px;
+  gap: 16px;
+  padding: 16px 16px 8px;
+}
+
+.planner-sync-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.planner-sync-btn:hover {
+  background: #2a2a2a;
+  color: #e5e5e5;
+}
+.planner-sync-btn:active {
+  background: #333;
+}
+
+.planner-spin {
+  animation: planner-rotate 0.8s linear infinite;
+}
+
+@keyframes planner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .planner-year {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, X, Plus, CircleAlert, LucideProps } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Plus, CircleAlert, Download, RefreshCw, LucideProps } from 'lucide-react';
 
 const iconMap: Record<string, React.FC<LucideProps>> = {
   ChevronLeft,
@@ -7,6 +7,8 @@ const iconMap: Record<string, React.FC<LucideProps>> = {
   X,
   Plus,
   CircleAlert,
+  Download,
+  RefreshCw,
 };
 
 interface IconProps extends LucideProps {
