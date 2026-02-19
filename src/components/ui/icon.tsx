@@ -1,6 +1,13 @@
 import React from 'react';
-import * as LucideIcons from 'lucide-react';
-import { LucideProps } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Plus, CircleAlert, LucideProps } from 'lucide-react';
+
+const iconMap: Record<string, React.FC<LucideProps>> = {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Plus,
+  CircleAlert,
+};
 
 interface IconProps extends LucideProps {
   name: string;
@@ -8,17 +15,13 @@ interface IconProps extends LucideProps {
 }
 
 const Icon: React.FC<IconProps> = ({ name, fallback = 'CircleAlert', ...props }) => {
-  const IconComponent = (LucideIcons as Record<string, React.FC<LucideProps>>)[name];
+  const IconComponent = iconMap[name];
 
   if (!IconComponent) {
-    // Если иконка не найдена, используем fallback иконку
-    const FallbackIcon = (LucideIcons as Record<string, React.FC<LucideProps>>)[fallback];
-
-    // Если даже fallback не найден, возвращаем пустой span
+    const FallbackIcon = iconMap[fallback];
     if (!FallbackIcon) {
       return <span className="text-xs text-gray-400">[icon]</span>;
     }
-
     return <FallbackIcon {...props} />;
   }
 
