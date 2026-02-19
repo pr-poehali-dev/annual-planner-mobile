@@ -1,0 +1,18 @@
+{
+  "name": "Планер",
+  "short_name": "Планер",
+  "description": "Годовой планер по месяцам",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn.poehali.dev/projects/ef82095d-75fa-4b08-b134-5e89f67bc998/files/d2f22cdf-4db9-4ac3-ab61-30b3d58f1a8c.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
