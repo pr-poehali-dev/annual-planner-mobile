@@ -21,7 +21,7 @@ const YearPlanner = () => {
   const now = new Date();
   const [year, setYear] = useState(now.getFullYear());
   const [events, setEvents] = useState<PlannerData>(load);
-  const [editing, setEditing] = useState<number | null>(null);
+  const [editing, setEditing] = useState<{ month: number; idx: number | null } | null>(null);
   const [value, setValue] = useState("");
   const [confirm, setConfirm] = useState<{ month: number; idx: number; text: string } | null>(null);
 
@@ -34,7 +34,7 @@ const YearPlanner = () => {
   }, [events]);
 
   useEffect(() => {
-    if (editing !== null) inputRef.current?.focus();
+    if (editing) inputRef.current?.focus();
   }, [editing]);
 
   useEffect(() => {
@@ -64,14 +64,23 @@ const YearPlanner = () => {
     }
   };
 
-  const addEvent = (month: number) => {
-    if (!value.trim()) return;
+  const saveEvent = (month: number, idx: number | null) => {
+    if (!value.trim()) {
+      setEditing(null);
+      setValue("");
+      return;
+    }
     const k = String(year);
     const m = String(month);
-    setEvents((prev) => ({
-      ...prev,
-      [k]: { ...prev[k], [m]: [...(prev[k]?.[m] || []), value.trim()] },
-    }));
+    setEvents((prev) => {
+      const list = [...(prev[k]?.[m] || [])];
+      if (idx !== null) {
+        list[idx] = value.trim();
+      } else {
+        list.push(value.trim());
+      }
+      return { ...prev, [k]: { ...prev[k], [m]: list } };
+    });
     setValue("");
     setEditing(null);
   };
@@ -127,46 +136,58 @@ const YearPlanner = () => {
                 </div>
 
                 <div className="planner-events">
-                  {items.map((text, ei) => (
-                    <div key={ei} className={`planner-event ${current ? "planner-event--current" : ""}`}>
-                      <span className="planner-event-text">{text}</span>
-                      <button
-                        onClick={() => setConfirm({ month: i, idx: ei, text })}
-                        className="planner-event-delete"
-                      >
-                        <Icon name="X" size={14} />
-                      </button>
-                    </div>
-                  ))}
+                  {items.map((text, ei) => {
+                    const isEditing = editing?.month === i && editing?.idx === ei;
+                    if (isEditing) {
+                      return (
+                        <input
+                          key={ei}
+                          ref={inputRef}
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEvent(i, ei);
+                            if (e.key === "Escape") { setEditing(null); setValue(""); }
+                          }}
+                          onBlur={() => saveEvent(i, ei)}
+                          className="planner-input"
+                        />
+                      );
+                    }
+                    return (
+                      <div key={ei} className={`planner-event ${current ? "planner-event--current" : ""}`}>
+                        <span
+                          className="planner-event-text"
+                          onClick={() => { setEditing({ month: i, idx: ei }); setValue(text); }}
+                        >
+                          {text}
+                        </span>
+                        <button
+                          onClick={() => setConfirm({ month: i, idx: ei, text })}
+                          className="planner-event-delete"
+                        >
+                          <Icon name="X" size={14} />
+                        </button>
+                      </div>
+                    );
+                  })}
 
-                  {editing === i ? (
+                  {editing?.month === i && editing?.idx === null ? (
                     <input
                       ref={inputRef}
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") addEvent(i);
-                        if (e.key === "Escape") {
-                          setEditing(null);
-                          setValue("");
-                        }
+                        if (e.key === "Enter") saveEvent(i, null);
+                        if (e.key === "Escape") { setEditing(null); setValue(""); }
                       }}
-                      onBlur={() => {
-                        if (value.trim()) addEvent(i);
-                        else {
-                          setEditing(null);
-                          setValue("");
-                        }
-                      }}
+                      onBlur={() => saveEvent(i, null)}
                       placeholder="Событие..."
                       className="planner-input"
                     />
                   ) : (
                     <button
-                      onClick={() => {
-                        setEditing(i);
-                        setValue("");
-                      }}
+                      onClick={() => { setEditing({ month: i, idx: null }); setValue(""); }}
                       className="planner-add"
                     >
                       <Icon name="Plus" size={16} />
