@@ -1,0 +1,1 @@
+{"tests": [{"name": "Get planner data", "method": "GET", "path": "/", "expectedStatus": 200, "expectedBody": {"events": "object"}, "bodyMatcher": "partial"}, {"name": "Save planner data", "method": "POST", "path": "/", "body": {"events": {"2026": {"0": ["Test"]}}}, "expectedStatus": 200, "expectedBody": {"ok": true}, "bodyMatcher": "partial"}]}
