@@ -23,6 +23,7 @@ const YearPlanner = () => {
   const [events, setEvents] = useState<PlannerData>(load);
   const [editing, setEditing] = useState<number | null>(null);
   const [value, setValue] = useState("");
+  const [confirm, setConfirm] = useState<{ month: number; idx: number; text: string } | null>(null);
 
   const touch = useRef({ x: 0, y: 0 });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -130,7 +131,7 @@ const YearPlanner = () => {
                     <div key={ei} className={`planner-event ${current ? "planner-event--current" : ""}`}>
                       <span className="planner-event-text">{text}</span>
                       <button
-                        onClick={() => removeEvent(i, ei)}
+                        onClick={() => setConfirm({ month: i, idx: ei, text })}
                         className="planner-event-delete"
                       >
                         <Icon name="X" size={14} />
@@ -177,6 +178,32 @@ const YearPlanner = () => {
           })}
         </div>
       </div>
+      {confirm && (
+        <div className="planner-overlay" onClick={() => setConfirm(null)}>
+          <div className="planner-dialog" onClick={(e) => e.stopPropagation()}>
+            <p className="planner-dialog-text">
+              Удалить «{confirm.text}»?
+            </p>
+            <div className="planner-dialog-actions">
+              <button
+                className="planner-dialog-btn planner-dialog-btn--cancel"
+                onClick={() => setConfirm(null)}
+              >
+                Отмена
+              </button>
+              <button
+                className="planner-dialog-btn planner-dialog-btn--delete"
+                onClick={() => {
+                  removeEvent(confirm.month, confirm.idx);
+                  setConfirm(null);
+                }}
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
