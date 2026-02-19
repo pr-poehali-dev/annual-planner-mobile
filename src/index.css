@@ -99,3 +99,245 @@
     @apply bg-background text-foreground;
   }
 }
+
+.planner-root {
+  min-height: 100dvh;
+  background: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.planner-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 0 8px;
+}
+
+.planner-year {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+  min-width: 56px;
+  text-align: center;
+  animation: planner-fade-in 0.2s ease;
+}
+
+.planner-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.planner-arrow:hover {
+  background: #e5e5e5;
+  color: #1a1a1a;
+}
+.planner-arrow:active {
+  background: #ddd;
+}
+
+.planner-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: y proximity;
+  padding: 4px 16px 32px;
+}
+
+.planner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: planner-fade-in 0.2s ease;
+}
+
+.planner-card {
+  background: #e8e8e8;
+  border-radius: 14px;
+  padding: 14px 16px;
+  scroll-snap-align: start;
+  transition: background 0.2s;
+}
+
+.planner-card--current {
+  background: #1a1a1a;
+}
+
+.planner-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.planner-month {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+}
+
+.planner-month--current {
+  color: #fff;
+}
+
+.planner-count {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+}
+
+.planner-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.planner-event {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.planner-event--current {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.planner-event-text {
+  font-size: 14px;
+  color: #444;
+  flex: 1;
+  line-height: 1.3;
+}
+
+.planner-event--current .planner-event-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.planner-event-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #aaa;
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    color 0.15s;
+}
+
+.planner-event--current .planner-event-delete {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.planner-event:hover .planner-event-delete,
+.planner-event:active .planner-event-delete {
+  opacity: 1;
+}
+
+@media (pointer: coarse) {
+  .planner-event-delete {
+    opacity: 1;
+  }
+}
+
+.planner-event-delete:hover {
+  color: #e55;
+}
+
+.planner-input {
+  width: 100%;
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(0, 0, 0, 0.05);
+  color: #1a1a1a;
+  caret-color: #999;
+}
+
+.planner-card--current .planner-input {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.planner-input::placeholder {
+  color: #aaa;
+}
+
+.planner-card--current .planner-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.planner-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.planner-card--current .planner-add {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.planner-add:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #888;
+}
+
+.planner-card--current .planner-add:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@keyframes planner-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
